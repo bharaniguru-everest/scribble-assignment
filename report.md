@@ -14,7 +14,7 @@
 | # | Scenario (User Story) | Priority | Status | Validated (two tabs) |
 |---|-----------------------|----------|--------|----------------------|
 | 1 | Room Setup & Lobby | P1 | ✅ Done | Pending manual two-tab run |
-| 2 | Game Start & Drawer Flow | P2 | ⬜ Not started | — |
+| 2 | Game Start & Drawer Flow | P2 | ✅ Done | Pending manual two-tab run |
 | 3 | Gameplay Interaction | P3 | ⬜ Not started | — |
 | 4 | Result, Restart & Final Validation | P4 | ⬜ Not started | — |
 
@@ -77,18 +77,37 @@ swallows transient errors to keep the lobby live.
 
 ## Scenario 2 — Game Start & Drawer Flow (P2)
 
-**Status**: ⬜ Not started · **Tasks**: T013–T018
+**Status**: ✅ Done (code complete; manual two-tab validation pending) · **Tasks**: T013–T018
 
 **Acceptance**:
 
-- [ ] Player names trimmed; empty/whitespace rejected
-- [ ] Host starts round; exactly one drawer identified
-- [ ] Secret word selected deterministically from the starter list
-- [ ] Word visible only to the drawer (hidden from guessers)
+- [x] Player names trimmed; empty/whitespace rejected (delivered in Scenario 1, FR-008)
+- [x] Host starts round; exactly one drawer identified
+- [x] Secret word selected deterministically from the starter list
+- [x] Word visible only to the drawer (hidden from guessers)
 
-**Implemented**: _(pending)_
-**Validated**: _(pending)_
-**Notes / deviations**: _(none yet)_
+**Implemented**:
+- `startRound` with host (403) + min-2-players (400) guards and deterministic word selection
+  (`STARTER_WORDS[0]`) — [backend/src/services/roomStore.ts](backend/src/services/roomStore.ts).
+- `startGameSchema` + `POST /rooms/:code/start` route —
+  [backend/src/api/schemas.ts](backend/src/api/schemas.ts),
+  [backend/src/api/rooms.ts](backend/src/api/rooms.ts).
+- Drawer-only word visibility enforced server-side in `toRoomSnapshot` (word serialized only when
+  `viewer === drawerId`).
+- `startGame` API call + store action —
+  [frontend/src/services/api.ts](frontend/src/services/api.ts),
+  [frontend/src/state/roomStore.ts](frontend/src/state/roomStore.ts).
+- Lobby Start now triggers the round and all players auto-advance to the game on `status: active`;
+  Game screen identifies the drawer and shows the word only to the drawer —
+  [frontend/src/pages/LobbyPage.tsx](frontend/src/pages/LobbyPage.tsx),
+  [frontend/src/pages/GamePage.tsx](frontend/src/pages/GamePage.tsx).
+- Tests: start guards, deterministic word, drawer assignment —
+  [roomStore.test.ts](backend/src/services/roomStore.test.ts).
+
+**Validated**: Backend + frontend `npm run build` pass (2026-06-05). Vitest still blocked by Node 18.
+Manual two-tab quickstart run pending.
+**Notes / deviations**: Deterministic word = first word in the seed list (`rocket`). Drawing tools
+themselves arrive in Scenario 3; the canvas currently shows a placeholder for the drawer.
 
 ---
 

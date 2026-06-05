@@ -106,6 +106,18 @@ class RoomStore {
     return Boolean(room && participantId && room.hostId === participantId);
   }
 
+  async startGame() {
+    const { room, participantId } = this.state;
+
+    if (!room || !participantId) {
+      return null;
+    }
+
+    const response = await this.withLoading(() => api.startGame(room.code, participantId));
+    this.setRoomSnapshot(response.room);
+    return response.room;
+  }
+
   startPolling(intervalMs = 2000) {
     if (this.pollTimer) {
       return;

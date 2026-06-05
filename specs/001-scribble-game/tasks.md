@@ -83,15 +83,15 @@ to enable independent implementation and testing.
 
 ### Tests for User Story 2 (optional)
 
-- [ ] T013 [P] [US2] Add roomStore tests for start guards (non-host → blocked, <2 players → blocked), deterministic word selection, and drawer assignment in `backend/src/services/roomStore.test.ts`.
+- [X] T013 [P] [US2] Add roomStore tests for start guards (non-host → blocked, <2 players → blocked), deterministic word selection, and drawer assignment in `backend/src/services/roomStore.test.ts`.
 
 ### Implementation for User Story 2
 
-- [ ] T014 [US2] Add `startRound(code, participantId)` to `backend/src/services/roomStore.ts`: require host and ≥2 players, set `status: "active"`, assign `drawerId` (the host), and select the word deterministically by index into `STARTER_WORDS` from `backend/src/seed/starterData.ts` (FR-009, FR-010, R2).
-- [ ] T015 [US2] Implement viewer-dependent word visibility in `toRoomSnapshot` (`backend/src/services/roomStore.ts`): include `word` only when `viewerParticipantId === drawerId`; otherwise `null` with `hasWord: true` (FR-011, R4).
-- [ ] T016 [US2] Add `startGameSchema` (`participantId`) in `backend/src/api/schemas.ts` and a `POST /:code/start` route with host (`403`) and min-players (`400`) guards in `backend/src/api/rooms.ts`.
-- [ ] T017 [P] [US2] Add `startGame(code, participantId)` to `frontend/src/services/api.ts` and a `startGame` action to `frontend/src/state/roomStore.ts`.
-- [ ] T018 [US2] Update `frontend/src/pages/GamePage.tsx` to identify the drawer and show the secret word only to the drawer (hidden for guessers), navigating from lobby on `status: "active"`.
+- [X] T014 [US2] Add `startRound(code, participantId)` to `backend/src/services/roomStore.ts`: require host and ≥2 players, set `status: "active"`, assign `drawerId` (the host), and select the word deterministically by index into `STARTER_WORDS` from `backend/src/seed/starterData.ts` (FR-009, FR-010, R2).
+- [X] T015 [US2] Implement viewer-dependent word visibility in `toRoomSnapshot` (`backend/src/services/roomStore.ts`): include `word` only when `viewerParticipantId === drawerId`; otherwise `null` with `hasWord: true` (FR-011, R4).
+- [X] T016 [US2] Add `startGameSchema` (`participantId`) in `backend/src/api/schemas.ts` and a `POST /:code/start` route with host (`403`) and min-players (`400`) guards in `backend/src/api/rooms.ts`.
+- [X] T017 [P] [US2] Add `startGame(code, participantId)` to `frontend/src/services/api.ts` and a `startGame` action to `frontend/src/state/roomStore.ts`.
+- [X] T018 [US2] Update `frontend/src/pages/GamePage.tsx` to identify the drawer and show the secret word only to the drawer (hidden for guessers), navigating from lobby on `status: "active"`.
 
 **Checkpoint**: A started round shows one drawer and drawer-only word visibility.
 

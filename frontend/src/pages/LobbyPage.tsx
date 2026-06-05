@@ -22,12 +22,29 @@ export function LobbyPage() {
     return () => roomStore.stopPolling();
   }, [roomStore]);
 
+  // Once the host starts the round, every player (incl. guessers, via polling) advances to the game.
+  useEffect(() => {
+    if (room && room.status !== "lobby") {
+      navigate("/game");
+    }
+  }, [navigate, room]);
+
   async function handleRefresh() {
     try {
       setRefreshError(null);
       await roomStore.fetchRoom();
     } catch (caughtError) {
       setRefreshError(caughtError instanceof Error ? caughtError.message : "Unable to refresh room");
+    }
+  }
+
+  async function handleStart() {
+    try {
+      setRefreshError(null);
+      await roomStore.startGame();
+      navigate("/game");
+    } catch (caughtError) {
+      setRefreshError(caughtError instanceof Error ? caughtError.message : "Unable to start the game");
     }
   }
 
@@ -93,9 +110,9 @@ export function LobbyPage() {
         {isHost ? (
           <button
             className="button button--primary"
-            disabled={!canStart}
+            disabled={!canStart || isLoading}
             title={canStart ? undefined : "At least 2 players are needed to start."}
-            onClick={() => navigate("/game")}
+            onClick={handleStart}
           >
             Start Game
           </button>

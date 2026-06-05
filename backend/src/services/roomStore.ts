@@ -93,6 +93,41 @@ export function getRoom(code: string) {
   return room ? cloneRoom(room) : null;
 }
 
+export type RoomActionResult =
+  | { ok: true; room: Room }
+  | { ok: false; status: number; message: string };
+
+export function startRound(code: string, participantId: string): RoomActionResult {
+  const room = rooms.get(code);
+
+  if (!room) {
+    return { ok: false, status: 404, message: "Unable to load room" };
+  }
+
+  if (room.hostId !== participantId) {
+    return { ok: false, status: 403, message: "Only the host can start the game" };
+  }
+
+  if (room.participants.length < 2) {
+    return { ok: false, status: 400, message: "At least 2 players are needed to start" };
+  }
+
+  // Deterministic word selection from the seeded list (no randomness).
+  const word = STARTER_WORDS[0];
+
+  room.status = "active";
+  room.round = {
+    drawerId: room.hostId,
+    word,
+    guesses: [],
+    status: "active"
+  };
+  room.updatedAt = now();
+  rooms.set(room.code, room);
+
+  return { ok: true, room: cloneRoom(room) };
+}
+
 export function saveRoom(room: Room) {
   room.updatedAt = now();
   rooms.set(room.code, cloneRoom(room));
