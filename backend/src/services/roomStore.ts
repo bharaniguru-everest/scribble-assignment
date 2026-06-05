@@ -37,7 +37,8 @@ function createParticipant(name?: string): Participant {
   return {
     id: randomUUID(),
     name: displayName(name),
-    joinedAt: now()
+    joinedAt: now(),
+    score: 0
   };
 }
 
@@ -54,7 +55,9 @@ export function createRoom(playerName?: string) {
   const room: Room = {
     code: generateUniqueCode(),
     status: "lobby",
+    hostId: participant.id,
     participants: [participant],
+    round: null,
     createdAt: now(),
     updatedAt: now()
   };
@@ -97,12 +100,18 @@ export function saveRoom(room: Room) {
 }
 
 export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSnapshot {
-  void viewerParticipantId;
+  const round = room.round;
+  const isDrawer = Boolean(round) && viewerParticipantId === round?.drawerId;
 
   return {
     code: room.code,
     status: room.status,
+    hostId: room.hostId,
     participants: room.participants.map((participant) => ({ ...participant })),
+    drawerId: round?.drawerId ?? null,
+    word: isDrawer ? (round?.word ?? null) : null,
+    hasWord: Boolean(round?.word),
+    guesses: round ? round.guesses.map((guess) => ({ ...guess })) : [],
     availableWords: listWords(),
     roles: [...STARTER_ROLES]
   };

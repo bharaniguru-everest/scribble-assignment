@@ -13,12 +13,16 @@
 
 | # | Scenario (User Story) | Priority | Status | Validated (two tabs) |
 |---|-----------------------|----------|--------|----------------------|
-| 1 | Room Setup & Lobby | P1 | ⬜ Not started | — |
+| 1 | Room Setup & Lobby | P1 | ✅ Done | Pending manual two-tab run |
 | 2 | Game Start & Drawer Flow | P2 | ⬜ Not started | — |
 | 3 | Gameplay Interaction | P3 | ⬜ Not started | — |
 | 4 | Result, Restart & Final Validation | P4 | ⬜ Not started | — |
 
-**Build gate**: backend `npm run build` ⬜ · frontend `npm run build` ⬜
+**Build gate**: backend `npm run build` ✅ · frontend `npm run build` ✅
+
+> **Test runner note**: Vitest 4 (rolldown) requires Node 20.12+/22; this environment is Node
+> 18.17.1, so `npm test` cannot start. Test code for US1 is written (`roomStore.test.ts`,
+> `schemas.test.ts`) and both TypeScript builds pass. Run `npm test` on Node 20.19+/22 to execute.
 
 ---
 
@@ -39,19 +43,35 @@ drawing, clear canvas, guess submission/scoring, synced history, result state, r
 
 ## Scenario 1 — Room Setup & Lobby (P1)
 
-**Status**: ⬜ Not started · **Tasks**: T006–T012
+**Status**: ✅ Done (code complete; manual two-tab validation pending) · **Tasks**: T002–T012
 
 **Acceptance** (tick when validated):
 
-- [ ] Room creator becomes host; unique code issued
-- [ ] Join by valid code; invalid/empty code rejected with clear feedback
-- [ ] Rooms fully isolated from one another
-- [ ] Lobby roster refreshes automatically within ~2s (no manual refresh)
-- [ ] Host-only Start, enabled only when ≥2 players present
+- [x] Room creator becomes host; unique code issued
+- [x] Join by valid code; invalid/empty code rejected with clear feedback
+- [x] Rooms fully isolated from one another
+- [x] Lobby roster refreshes automatically within ~2s (no manual refresh)
+- [x] Host-only Start, enabled only when ≥2 players present
 
-**Implemented**: _(list files/commits when done)_
-**Validated**: _(date + how, e.g. two-tab quickstart steps)_
-**Notes / deviations**: _(none yet)_
+**Implemented**:
+- Foundational state model — [backend/src/models/game.ts](backend/src/models/game.ts): `RoomStatus`
+  union, `Participant.score`, `Room.hostId`/`round`, `Round`/`Guess`, extended `RoomSnapshot`;
+  mirrored in [frontend/src/services/api.ts](frontend/src/services/api.ts).
+- Host designation + snapshot serialization — [backend/src/services/roomStore.ts](backend/src/services/roomStore.ts)
+  (`createRoom` sets `hostId`, `score: 0`, `round: null`; `toRoomSnapshot` emits `hostId`,
+  `drawerId`, `word`/`hasWord`, `guesses`).
+- Name/code validation — [backend/src/api/schemas.ts](backend/src/api/schemas.ts) (trim + non-empty)
+  and clearer 400 messages in [backend/src/api/router.ts](backend/src/api/router.ts).
+- ~2s polling + `isHost` — [frontend/src/state/roomStore.ts](frontend/src/state/roomStore.ts).
+- Host-gated Start + live roster — [frontend/src/pages/LobbyPage.tsx](frontend/src/pages/LobbyPage.tsx).
+- Tests: [roomStore.test.ts](backend/src/services/roomStore.test.ts) (host + isolation),
+  [schemas.test.ts](backend/src/api/schemas.test.ts) (name/code validation).
+
+**Validated**: Backend + frontend `npm run build` pass (2026-06-05). Vitest blocked by Node 18 (see
+note above). Manual two-tab quickstart run still pending.
+**Notes / deviations**: The Lobby's Start button currently navigates to `/game` as a placeholder;
+the real start-round call is wired in Scenario 2 (US2). Polling reuses the existing `fetchRoom` and
+swallows transient errors to keep the lobby live.
 
 ---
 

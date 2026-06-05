@@ -43,10 +43,10 @@ to enable independent implementation and testing.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 Extend the state model in `backend/src/models/game.ts`: widen `RoomStatus` to `"lobby" | "active" | "result"`; add `score: number` to `Participant`; add `hostId: string` and `round: Round | null` to `Room`.
-- [ ] T003 Add `Round` and `Guess` interfaces and extend `RoomSnapshot` (add `hostId`, `drawerId`, `word: string | null`, `hasWord: boolean`, `guesses: Guess[]`) in `backend/src/models/game.ts`, per [data-model.md](./data-model.md).
-- [ ] T004 [P] Mirror the extended types (`Participant.score`, `RoomStatus` union, `Round`, `Guess`, extended `RoomSnapshot`) in `frontend/src/services/api.ts`.
-- [ ] T005 Set `hostId` to the creator's participant id in `createRoom` and reset/initialize `score: 0` and `round: null` in `backend/src/services/roomStore.ts`.
+- [X] T002 Extend the state model in `backend/src/models/game.ts`: widen `RoomStatus` to `"lobby" | "active" | "result"`; add `score: number` to `Participant`; add `hostId: string` and `round: Round | null` to `Room`.
+- [X] T003 Add `Round` and `Guess` interfaces and extend `RoomSnapshot` (add `hostId`, `drawerId`, `word: string | null`, `hasWord: boolean`, `guesses: Guess[]`) in `backend/src/models/game.ts`, per [data-model.md](./data-model.md).
+- [X] T004 [P] Mirror the extended types (`Participant.score`, `RoomStatus` union, `Round`, `Guess`, extended `RoomSnapshot`) in `frontend/src/services/api.ts`.
+- [X] T005 Set `hostId` to the creator's participant id in `createRoom` and reset/initialize `score: 0` and `round: null` in `backend/src/services/roomStore.ts`.
 
 **Checkpoint**: Shared model extended — user stories can now begin.
 
@@ -60,16 +60,16 @@ to enable independent implementation and testing.
 
 ### Tests for User Story 1 (optional)
 
-- [ ] T006 [P] [US1] Add roomStore tests for host designation on create and room isolation (mutating one room never affects another) in `backend/src/services/roomStore.test.ts`.
-- [ ] T007 [P] [US1] Add schema tests for empty/whitespace `playerName` rejection and unknown room code in `backend/src/api/schemas.test.ts`.
+- [X] T006 [P] [US1] Add roomStore tests for host designation on create and room isolation (mutating one room never affects another) in `backend/src/services/roomStore.test.ts`.
+- [X] T007 [P] [US1] Add schema tests for empty/whitespace `playerName` rejection and unknown room code in `backend/src/api/schemas.test.ts`.
 
 ### Implementation for User Story 1
 
-- [ ] T008 [US1] Strengthen `createRoomSchema` and `joinRoomSchema` in `backend/src/api/schemas.ts` to trim `playerName` and reject empty/whitespace-only names (FR-008).
-- [ ] T009 [US1] Return `400` with a clear message for empty names and keep `404` for unknown/invalid codes in `backend/src/api/rooms.ts` (FR-004).
-- [ ] T010 [US1] Ensure `toRoomSnapshot` serializes `hostId`, per-participant `score`, `status`, `drawerId: null`, `word: null`, `hasWord: false`, and `guesses: []` for lobby state in `backend/src/services/roomStore.ts`.
-- [ ] T011 [P] [US1] Add ~2s polling to `RoomStore` in `frontend/src/state/roomStore.ts`: start/stop a timer that calls `fetchRoom`, and expose a derived `isHost` (`participantId === room.hostId`).
-- [ ] T012 [US1] Update `frontend/src/pages/LobbyPage.tsx` to render the live roster, start polling on mount/stop on unmount, and show an enabled Start control only for the host when `participants.length >= 2` (FR-007).
+- [X] T008 [US1] Strengthen `createRoomSchema` and `joinRoomSchema` in `backend/src/api/schemas.ts` to trim `playerName` and reject empty/whitespace-only names (FR-008).
+- [X] T009 [US1] Return `400` with a clear message for empty names and keep `404` for unknown/invalid codes in `backend/src/api/rooms.ts` (FR-004).
+- [X] T010 [US1] Ensure `toRoomSnapshot` serializes `hostId`, per-participant `score`, `status`, `drawerId: null`, `word: null`, `hasWord: false`, and `guesses: []` for lobby state in `backend/src/services/roomStore.ts`.
+- [X] T011 [P] [US1] Add ~2s polling to `RoomStore` in `frontend/src/state/roomStore.ts`: start/stop a timer that calls `fetchRoom`, and expose a derived `isHost` (`participantId === room.hostId`).
+- [X] T012 [US1] Update `frontend/src/pages/LobbyPage.tsx` to render the live roster, start polling on mount/stop on unmount, and show an enabled Start control only for the host when `participants.length >= 2` (FR-007).
 
 **Checkpoint**: Two tabs can create/join an isolated room and see a self-refreshing lobby (MVP).
 
