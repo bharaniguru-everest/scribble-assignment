@@ -105,16 +105,16 @@ to enable independent implementation and testing.
 
 ### Tests for User Story 3 (optional)
 
-- [ ] T019 [P] [US3] Add roomStore tests for guess validation (empty/whitespace rejected), case/whitespace-insensitive matching, and 100/0 scoring in `backend/src/services/roomStore.test.ts`.
+- [X] T019 [P] [US3] Add roomStore tests for guess validation (empty/whitespace rejected), case/whitespace-insensitive matching, and 100/0 scoring in `backend/src/services/roomStore.test.ts`.
 
 ### Implementation for User Story 3
 
-- [ ] T020 [US3] Add `submitGuess(code, participantId, text)` to `backend/src/services/roomStore.ts`: trim text, compare `text.toLowerCase() === word.toLowerCase()`, append a `Guess` to history, award +100 on correct / +0 otherwise (FR-014, FR-015, FR-016, FR-017).
-- [ ] T021 [US3] Add `guessSchema` (trim + non-empty `text`, `participantId`) in `backend/src/api/schemas.ts` and a `POST /:code/guess` route returning `400` for empty guesses in `backend/src/api/rooms.ts`.
-- [ ] T022 [P] [US3] Add `submitGuess(code, participantId, text)` to `frontend/src/services/api.ts` and a `submitGuess` action to `frontend/src/state/roomStore.ts`.
-- [ ] T023 [US3] Wire guess submission and inline validation in `frontend/src/components/GuessForm.tsx` (reject empty/whitespace before sending).
-- [ ] T024 [P] [US3] Render the synced guess history and per-player scores via `frontend/src/components/Scoreboard.tsx` (and the guess list in `frontend/src/pages/GamePage.tsx`).
-- [ ] T025 [US3] Add a native `<canvas>` drawing surface with pointer-event strokes and a Clear action for the drawer in `frontend/src/pages/GamePage.tsx` (no drawing library — R7).
+- [X] T020 [US3] Add `submitGuess(code, participantId, text)` to `backend/src/services/roomStore.ts`: trim text, compare `text.toLowerCase() === word.toLowerCase()`, append a `Guess` to history, award +100 on correct / +0 otherwise (FR-014, FR-015, FR-016, FR-017).
+- [X] T021 [US3] Add `guessSchema` (trim + non-empty `text`, `participantId`) in `backend/src/api/schemas.ts` and a `POST /:code/guess` route returning `400` for empty guesses in `backend/src/api/rooms.ts`.
+- [X] T022 [P] [US3] Add `submitGuess(code, participantId, text)` to `frontend/src/services/api.ts` and a `submitGuess` action to `frontend/src/state/roomStore.ts`.
+- [X] T023 [US3] Wire guess submission and inline validation in `frontend/src/components/GuessForm.tsx` (reject empty/whitespace before sending).
+- [X] T024 [P] [US3] Render the synced guess history and per-player scores via `frontend/src/components/Scoreboard.tsx` (and the guess list in `frontend/src/pages/GamePage.tsx`).
+- [X] T025 [US3] Add a native `<canvas>` drawing surface with pointer-event strokes and a Clear action for the drawer in `frontend/src/pages/GamePage.tsx` (no drawing library — R7).
 
 **Checkpoint**: Full play loop works — draw/clear, validated guesses, synced history, scoring.
 
@@ -128,15 +128,15 @@ to enable independent implementation and testing.
 
 ### Tests for User Story 4 (optional)
 
-- [ ] T026 [P] [US4] Add roomStore tests for the `active → result` transition on a correct guess and for restart (host-only, scores reset to 0, roster preserved, round cleared) in `backend/src/services/roomStore.test.ts`.
+- [X] T026 [P] [US4] Add roomStore tests for the `active → result` transition on a correct guess and for restart (host-only, scores reset to 0, roster preserved, round cleared) in `backend/src/services/roomStore.test.ts`.
 
 ### Implementation for User Story 4
 
-- [ ] T027 [US4] Transition `status` to `"result"` on a correct guess in `submitGuess` within `backend/src/services/roomStore.ts` (FR-018).
-- [ ] T028 [US4] Add `restartGame(code, participantId)` to `backend/src/services/roomStore.ts`: require host, set `status: "lobby"`, clear `round`, reset every `participant.score` to 0, preserve the roster (FR-019, FR-020).
-- [ ] T029 [US4] Add `restartSchema` (`participantId`) in `backend/src/api/schemas.ts` and a `POST /:code/restart` route with a host guard (`403`) in `backend/src/api/rooms.ts`.
-- [ ] T030 [P] [US4] Add `restartGame(code, participantId)` to `frontend/src/services/api.ts` and a `restartGame` action to `frontend/src/state/roomStore.ts`.
-- [ ] T031 [US4] Render the result state (correct word, final scores, full guess history) in `frontend/src/components/ResultPanel.tsx` and show a host-only Restart control in `frontend/src/pages/GamePage.tsx`.
+- [X] T027 [US4] Transition `status` to `"result"` on a correct guess in `submitGuess` within `backend/src/services/roomStore.ts` (FR-018).
+- [X] T028 [US4] Add `restartGame(code, participantId)` to `backend/src/services/roomStore.ts`: require host, set `status: "lobby"`, clear `round`, reset every `participant.score` to 0, preserve the roster (FR-019, FR-020).
+- [X] T029 [US4] Add `restartSchema` (`participantId`) in `backend/src/api/schemas.ts` and a `POST /:code/restart` route with a host guard (`403`) in `backend/src/api/rooms.ts`.
+- [X] T030 [P] [US4] Add `restartGame(code, participantId)` to `frontend/src/services/api.ts` and a `restartGame` action to `frontend/src/state/roomStore.ts`.
+- [X] T031 [US4] Render the result state (correct word, final scores, full guess history) in `frontend/src/components/ResultPanel.tsx` and show a host-only Restart control in `frontend/src/pages/GamePage.tsx`.
 
 **Checkpoint**: One full session — lobby → round → result → restart — works end to end.
 

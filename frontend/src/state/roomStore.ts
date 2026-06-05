@@ -118,6 +118,30 @@ class RoomStore {
     return response.room;
   }
 
+  async submitGuess(text: string) {
+    const { room, participantId } = this.state;
+
+    if (!room || !participantId) {
+      return null;
+    }
+
+    const response = await this.withLoading(() => api.submitGuess(room.code, participantId, text));
+    this.setRoomSnapshot(response.room);
+    return response.room;
+  }
+
+  async restartGame() {
+    const { room, participantId } = this.state;
+
+    if (!room || !participantId) {
+      return null;
+    }
+
+    const response = await this.withLoading(() => api.restartGame(room.code, participantId));
+    this.setRoomSnapshot(response.room);
+    return response.room;
+  }
+
   startPolling(intervalMs = 2000) {
     if (this.pollTimer) {
       return;

@@ -15,8 +15,8 @@
 |---|-----------------------|----------|--------|----------------------|
 | 1 | Room Setup & Lobby | P1 | ✅ Done | Pending manual two-tab run |
 | 2 | Game Start & Drawer Flow | P2 | ✅ Done | Pending manual two-tab run |
-| 3 | Gameplay Interaction | P3 | ⬜ Not started | — |
-| 4 | Result, Restart & Final Validation | P4 | ⬜ Not started | — |
+| 3 | Gameplay Interaction | P3 | ✅ Done | Pending manual two-tab run |
+| 4 | Result, Restart & Final Validation | P4 | ✅ Done | Pending manual two-tab run |
 
 **Build gate**: backend `npm run build` ✅ · frontend `npm run build` ✅
 
@@ -113,36 +113,78 @@ themselves arrive in Scenario 3; the canvas currently shows a placeholder for th
 
 ## Scenario 3 — Gameplay Interaction (P3)
 
-**Status**: ⬜ Not started · **Tasks**: T019–T025
+**Status**: ✅ Done (code complete; manual two-tab validation pending) · **Tasks**: T019–T025
 
 **Acceptance**:
 
-- [ ] Drawer can draw on the canvas and clear it
-- [ ] Guesses trimmed; empty/whitespace rejected
-- [ ] Guess comparison is case-insensitive and whitespace-insensitive
-- [ ] Guess history synced to all players within ~2s
-- [ ] Scores start at 0; correct = 100, incorrect = 0
+- [x] Drawer can draw on the canvas and clear it
+- [x] Guesses trimmed; empty/whitespace rejected
+- [x] Guess comparison is case-insensitive and whitespace-insensitive
+- [x] Guess history synced to all players within ~2s
+- [x] Scores start at 0; correct = 100, incorrect = 0
 
-**Implemented**: _(pending)_
-**Validated**: _(pending)_
-**Notes / deviations**: _(none yet)_
+**Implemented**:
+- `submitGuess` — trims, compares `toLowerCase()` against the word, appends a `Guess` to history,
+  awards +100 on correct / +0 otherwise — [backend/src/services/roomStore.ts](backend/src/services/roomStore.ts).
+- `guessSchema` + `POST /rooms/:code/guess` (400 on empty) —
+  [backend/src/api/schemas.ts](backend/src/api/schemas.ts),
+  [backend/src/api/rooms.ts](backend/src/api/rooms.ts).
+- `submitGuess` API call + store action —
+  [frontend/src/services/api.ts](frontend/src/services/api.ts),
+  [frontend/src/state/roomStore.ts](frontend/src/state/roomStore.ts).
+- GuessForm submits with inline empty-guess validation, disabled for the drawer —
+  [frontend/src/components/GuessForm.tsx](frontend/src/components/GuessForm.tsx).
+- Live scoreboard sorted by score —
+  [frontend/src/components/Scoreboard.tsx](frontend/src/components/Scoreboard.tsx).
+- Native `<canvas>` with pointer-drawing + Clear (drawer only) and a synced guess-history card —
+  [frontend/src/pages/GamePage.tsx](frontend/src/pages/GamePage.tsx).
+- Tests: empty-guess rejection, case/whitespace-insensitive correct=100, incorrect=0 in history —
+  [roomStore.test.ts](backend/src/services/roomStore.test.ts).
+
+**Validated**: Backend + frontend `npm run build` pass (2026-06-05). Vitest still blocked by Node 18.
+Manual two-tab quickstart run pending.
+**Notes / deviations**: Drawing strokes are local to the drawer's screen (per plan R7 — only guess
+history and scores are synced, not canvas pixels). Guess history/scores sync via the existing ~2s
+polling. The round does **not** yet transition to the result state on a correct guess — that
+transition (`active → result`) is wired in Scenario 4 (T027).
 
 ---
 
 ## Scenario 4 — Result, Restart & Final Validation (P4)
 
-**Status**: ⬜ Not started · **Tasks**: T026–T031
+**Status**: ✅ Done (code complete; manual two-tab validation pending) · **Tasks**: T026–T031
 
 **Acceptance**:
 
-- [ ] All players see correct word, final scores, and full guess history
-- [ ] Host can restart from the result state
-- [ ] Restart returns everyone to the lobby with roster preserved
-- [ ] All round state (drawer, word, drawing, guesses, scores) cleared on restart
+- [x] All players see correct word, final scores, and full guess history
+- [x] Host can restart from the result state
+- [x] Restart returns everyone to the lobby with roster preserved
+- [x] All round state (drawer, word, drawing, guesses, scores) cleared on restart
 
-**Implemented**: _(pending)_
-**Validated**: _(pending)_
-**Notes / deviations**: _(none yet)_
+**Implemented**:
+- Correct guess transitions the room to `result`; `toRoomSnapshot` reveals the word to everyone in
+  the result state (drawer-only while active) — [backend/src/services/roomStore.ts](backend/src/services/roomStore.ts).
+- `restartGame` — host-only, returns to `lobby`, clears `round`, resets all scores to 0, preserves
+  the roster — (same file).
+- `restartSchema` + `POST /rooms/:code/restart` (403 for non-host) —
+  [backend/src/api/schemas.ts](backend/src/api/schemas.ts),
+  [backend/src/api/rooms.ts](backend/src/api/rooms.ts).
+- `restartGame` API call + store action —
+  [frontend/src/services/api.ts](frontend/src/services/api.ts),
+  [frontend/src/state/roomStore.ts](frontend/src/state/roomStore.ts).
+- ResultPanel shows correct word + final scores + full guess history; Game screen has a host-only
+  Restart and auto-returns all players to the lobby on restart (via polling) —
+  [frontend/src/components/ResultPanel.tsx](frontend/src/components/ResultPanel.tsx),
+  [frontend/src/pages/GamePage.tsx](frontend/src/pages/GamePage.tsx).
+- Tests: active→result on correct guess; restart non-host blocked; restart resets to lobby with
+  scores 0, round cleared, roster preserved —
+  [roomStore.test.ts](backend/src/services/roomStore.test.ts).
+
+**Validated**: Backend + frontend `npm run build` pass (2026-06-05). Vitest still blocked by Node 18.
+Manual two-tab quickstart run pending.
+**Notes / deviations**: Single round per session (per spec) — the round ends on the first correct
+guess. Drawing strokes are not cleared server-side because they were never synced (local-only,
+plan R7); a fresh round starts from a blank canvas on the next `start`.
 
 ---
 
